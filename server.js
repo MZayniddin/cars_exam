@@ -27,6 +27,9 @@ app.use(express.json());
 // SERVE STATIC FOLDER
 app.use(express.static(path.join(__dirname, "public")));
 
+// ROUTES
+app.use("/signin", require("./routes/signIn"));
+
 // 404 NOT FOUND
 app.all("*", (req, res) => {
     res.status(404);
