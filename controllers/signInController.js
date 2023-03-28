@@ -35,7 +35,6 @@ const signIn = async (req, res, next) => {
             message: `User ${username} successfully registered!`,
         });
     } catch (err) {
-        res.send({ message: err.message });
         next(err);
     }
 };
