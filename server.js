@@ -30,6 +30,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // ROUTES
 app.use("/signin", require("./routes/signIn"));
 app.use("/signup", require("./routes/singUp"));
+app.use("/car", require("./routes/api/cars"));
 
 // 404 NOT FOUND
 app.all("*", (req, res) => {

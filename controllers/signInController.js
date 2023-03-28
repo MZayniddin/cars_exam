@@ -22,7 +22,7 @@ const signIn = async (req, res, next) => {
             await pool.query("SELECT * FROM Emails WHERE name=$1", [email])
         ).rows[0].id;
 
-        // ENCYPT THE PASSWORD
+        // ENCRYPT THE PASSWORD
         const hashedPwd = await bcrypt.hash(password, 10);
 
         // STORE NEW USER TO DB
