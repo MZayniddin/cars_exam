@@ -20,3 +20,5 @@ const signUpValidation = async (req, res, next) => {
         next({ message: err.details[0].message, status: 406 });
     }
 };
+
+module.exports = signUpValidation;
