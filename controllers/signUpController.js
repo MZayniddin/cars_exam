@@ -31,7 +31,6 @@ const signUp = async (req, res, next) => {
     const accessToken = jwt.sign(
         {
             id: foundUser.id,
-            username: foundUser.name,
             role: foundUser.role,
             company_id: foundUser.company_id,
         },
@@ -44,7 +43,6 @@ const signUp = async (req, res, next) => {
     const refreshToken = jwt.sign(
         {
             id: foundUser.id,
-            username: foundUser.name,
         },
         process.env.REFRESH_SECRET_KEY,
         {
@@ -58,7 +56,7 @@ const signUp = async (req, res, next) => {
         maxAge: 24 * 60 * 60 * 100,
     });
 
-    res.status(200).json({ refreshToken });
+    res.status(200).json({ accessToken });
 };
 
 module.exports = { signUp };
