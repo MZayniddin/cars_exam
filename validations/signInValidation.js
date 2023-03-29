@@ -2,7 +2,7 @@ const Joi = require("joi");
 
 const signInValidation = async (req, res, next) => {
     const schema = Joi.object({
-        username: Joi.string().alphanum().min(3).max(20).required(),
+        username: Joi.string().trim().min(3).max(20).required(),
         email: Joi.string()
             .email({
                 minDomainSegments: 2,

@@ -1,15 +1,17 @@
 const Joi = require("joi");
 
 const companyValidation = async (req, res, next) => {
+    const { name, address } = req.body;
+    name ? (req.body.name = name.trim()) : null;
+    address ? (req.body.address = address.trim()) : null;
+
     const schema = Joi.object({
-        name: Joi.string().min(3).max(30).required(),
-        email: Joi.string()
-            .email({
-                minDomainSegments: 2,
-                tlds: { allow: ["com", "ru", "net"] },
-            })
-            .required(),
-        address: Joi.string().min(5).max(40).required(),
+        name: Joi.string().trim().min(3).max(30),
+        email: Joi.string().email({
+            minDomainSegments: 2,
+            tlds: { allow: ["com", "ru", "net"] },
+        }),
+        address: Joi.string().min(5).max(40),
     });
 
     try {

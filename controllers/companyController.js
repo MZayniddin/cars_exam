@@ -2,6 +2,12 @@ const pool = require("../config/dbCon");
 
 const createNewCompany = async (req, res, next) => {
     const { name, email, address } = req.body;
+    if (!name || !email || !address)
+        return res.status(400).json({
+            message:
+                "Each space: Company name, email and address are required!",
+        });
+
     try {
         // CHECK USER COMPANY
         const hasCompany = await (
@@ -11,7 +17,9 @@ const createNewCompany = async (req, res, next) => {
         ).rows[0].company_id;
 
         if (hasCompany)
-            return res.status(406).json({ message: "You have another company" });
+            return res
+                .status(406)
+                .json({ message: "You have another company" });
 
         // CHECK TO DUPLICATE
         const checkEmail = await pool.query(
@@ -78,4 +86,9 @@ const getCompany = async (req, res) => {
     res.status(400).json({ message: `Company ID ${companyId} not found` });
 };
 
-module.exports = { createNewCompany, getAllCompany, getCompany };
+const updateCompany = async (req, res) => {
+    const { name, address, email } = req.body;
+    res.send({ email, address, name });
+};
+
+module.exports = { createNewCompany, getAllCompany, getCompany, updateCompany };

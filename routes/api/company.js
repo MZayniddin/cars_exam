@@ -24,4 +24,12 @@ router.get("/list", companyController.getAllCompany);
 // GET A COMPANY
 router.get("/:companyId", companyController.getCompany);
 
+// UPDATE COMPANY
+router.put(
+    "/update/:companyId",
+    verifyRole(ROLES_LIST.Admin),
+    validateCompany,
+    companyController.updateCompany
+);
+
 module.exports = router;
