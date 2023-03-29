@@ -11,7 +11,7 @@ const createNewCompany = async (req, res, next) => {
         ).rows[0].company_id;
 
         if (hasCompany)
-            return res.status(406).json({ message: "Your company exists" });
+            return res.status(406).json({ message: "You have another company" });
 
         // CHECK TO DUPLICATE
         const checkEmail = await pool.query(
@@ -67,4 +67,15 @@ const getAllCompany = async (req, res) => {
     res.status(200).json(companyList.rows);
 };
 
-module.exports = { createNewCompany, getAllCompany };
+const getCompany = async (req, res) => {
+    const { companyId } = req.params;
+    const foundCompany = await pool.query("SELECT * FROM company WHERE id=$1", [
+        companyId,
+    ]);
+
+    if (foundCompany.rows[0]) return res.json(foundCompany.rows[0]);
+
+    res.status(400).json({ message: `Company ID ${companyId} not found` });
+};
+
+module.exports = { createNewCompany, getAllCompany, getCompany };

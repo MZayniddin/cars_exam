@@ -21,4 +21,7 @@ router.post(
 // GET ALL COMPANY
 router.get("/list", companyController.getAllCompany);
 
+// GET A COMPANY
+router.get("/:companyId", companyController.getCompany);
+
 module.exports = router;
