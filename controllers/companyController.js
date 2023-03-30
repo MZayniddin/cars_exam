@@ -87,8 +87,48 @@ const getCompany = async (req, res) => {
 };
 
 const updateCompany = async (req, res) => {
-    const { name, address, email } = req.body;
-    res.send({ email, address, name });
+    let { name, address, email } = req.body;
+    const { companyId } = req.params;
+
+    // CHECK COMPANY EXISTS
+    const foundCompany = await (
+        await pool.query("SELECT * FROM Company WHERE id=$1", [companyId])
+    ).rows[0];
+
+    if (!foundCompany)
+        return res
+            .status(400)
+            .json({ message: `Company ID ${companyId} not found!` });
+
+    // UPDATE EMAIL IF EXISTS
+    if (email) {
+        const checkEmail = await (
+            await pool.query("SELECT name FROM Emails WHERE name=$1", [email])
+        ).rowCount;
+        if (checkEmail)
+            return res.status(406).json({
+                message: "This email is already in use by another account",
+            });
+
+        await pool.query("UPDATE Emails SET name=$1 WHERE id=$2", [
+            email,
+            foundCompany.email_id,
+        ]);
+    }
+
+    // UPDATE COMPANY DATA
+    name = name ? name : foundCompany.name;
+    address = address ? address : foundCompany.address;
+
+    try {
+        const updatedCompanyData = await pool.query(
+            "UPDATE Company SET name=$1, address=$2 WHERE id=$3 RETURNING *",
+            [name, address, companyId]
+        );
+        res.status(202).json(updatedCompanyData.rows[0]);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 };
 
 module.exports = { createNewCompany, getAllCompany, getCompany, updateCompany };
