@@ -100,6 +100,10 @@ const updateCompany = async (req, res) => {
             .status(400)
             .json({ message: `Company ID ${companyId} not found!` });
 
+    // CHECK ADMIN
+    if (req.user !== foundCompany.created_by)
+        return res.status(403).json({ messege: "It's not your company!" });
+
     // UPDATE EMAIL IF EXISTS
     if (email) {
         const checkEmail = await (
