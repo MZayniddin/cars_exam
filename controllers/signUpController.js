@@ -49,6 +49,12 @@ const signUp = async (req, res, next) => {
         }
     );
 
+    // SAVING USER'S REFRESH TOKEN
+    await pool.query("UPDATE Users SET refresh_token=$1 WHERE id=$2", [
+        refreshToken,
+        foundUser.id,
+    ]);
+
     res.cookie("jwt", refreshToken, {
         httpOnly: true,
         sameSite: "None",
