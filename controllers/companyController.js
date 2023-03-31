@@ -135,4 +135,39 @@ const updateCompany = async (req, res) => {
     }
 };
 
-module.exports = { createNewCompany, getAllCompany, getCompany, updateCompany };
+const deleteCompany = async (req, res) => {
+    const { companyId } = req.params;
+
+    // CHECK COMPANY EXISTS
+    const foundCompany = await (
+        await pool.query("SELECT * FROM Company WHERE id=$1", [companyId])
+    ).rows[0];
+
+    if (!foundCompany)
+        return res
+            .status(400)
+            .json({ message: `Company ID ${companyId} not found!` });
+
+    // CHECK USER
+    if (foundCompany.created_by === req.user) {
+        // DELETE COMPANY
+        await pool.query("DELETE FROM Company WHERE id=$1", [companyId]);
+
+        // DELETE EMAIL
+        await pool.query("DELETE FROM Emails WHERE id=$1", [
+            foundCompany.email_id,
+        ]);
+
+        res.json(foundCompany);
+    } else {
+        res.status(403).json({ message: "It's not your company!" });
+    }
+};
+
+module.exports = {
+    createNewCompany,
+    getAllCompany,
+    getCompany,
+    updateCompany,
+    deleteCompany,
+};

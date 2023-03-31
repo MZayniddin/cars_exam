@@ -32,4 +32,11 @@ router.put(
     companyController.updateCompany
 );
 
+// DELETE A COMPANY
+router.delete(
+    "/destroy/:companyId",
+    verifyRole(ROLES_LIST.Admin),
+    companyController.deleteCompany
+);
+
 module.exports = router;
