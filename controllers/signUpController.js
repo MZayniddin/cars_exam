@@ -62,6 +62,9 @@ const signUp = async (req, res, next) => {
     });
 
     res.status(200).json({ accessToken });
+
+    // STORE SIGN UP DATE TO DB
+    await pool.query("INSERT INTO session(user_id) VALUES($1)", [foundUser.id]);
 };
 
 module.exports = { signUp };
