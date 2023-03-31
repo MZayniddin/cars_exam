@@ -18,7 +18,10 @@ const handleRefreshToken = async (req, res) => {
 
         // CREATE NEW ACCESS TOKEN
         const accessToken = jwt.sign(
-            { id: decoded.id, role: decoded.role },
+            {
+                id: foundUser.id,
+                role: foundUser.role,
+            },
             process.env.ACCESS_SECRET_KEY,
             {
                 expiresIn: process.env.ACCESS_TIME,
