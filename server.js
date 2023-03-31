@@ -36,6 +36,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/signin", require("./routes/signIn"));
 app.use("/signup", require("./routes/singUp"));
 app.use("/refresh", require("./routes/refresh"));
+app.use("/logout", require("./routes/logout"));
 
 app.use(verifyJWT);
 app.use("/car", require("./routes/api/cars"));
