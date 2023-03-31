@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcypt = require("bcrypt");
 const pool = require("../config/dbCon");
+const format = require("date-fns/format");
 
 const signUp = async (req, res, next) => {
     const { email, password } = req.body;
@@ -64,7 +65,10 @@ const signUp = async (req, res, next) => {
     res.status(200).json({ accessToken });
 
     // STORE SIGN UP DATE TO DB
-    await pool.query("INSERT INTO session(user_id) VALUES($1)", [foundUser.id]);
+    await pool.query(
+        "INSERT INTO session(user_id, started_at) VALUES($1, $2)",
+        [foundUser.id, format(new Date(), "yyyy-MM-dd HH:mm:ss")]
+    );
 };
 
 module.exports = { signUp };
