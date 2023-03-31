@@ -104,7 +104,7 @@ const updateCompany = async (req, res) => {
     if (req.user !== foundCompany.created_by)
         return res.status(403).json({ messege: "It's not your company!" });
 
-    // UPDATE EMAIL IF EXISTS
+    // CHECK EMAIL
     if (email) {
         const checkEmail = await (
             await pool.query("SELECT name FROM Emails WHERE name=$1", [email])
@@ -113,11 +113,6 @@ const updateCompany = async (req, res) => {
             return res.status(406).json({
                 message: "This email is already in use by another account",
             });
-
-        await pool.query("UPDATE Emails SET name=$1 WHERE id=$2", [
-            email,
-            foundCompany.email_id,
-        ]);
     }
 
     // UPDATE COMPANY DATA
@@ -129,6 +124,12 @@ const updateCompany = async (req, res) => {
             "UPDATE Company SET name=$1, address=$2 WHERE id=$3 RETURNING *",
             [name, address, companyId]
         );
+
+        await pool.query("UPDATE Emails SET name=$1 WHERE id=$2", [
+            email,
+            foundCompany.email_id,
+        ]);
+
         res.status(202).json(updatedCompanyData.rows[0]);
     } catch (err) {
         res.status(500).json({ message: err.message });
