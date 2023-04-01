@@ -92,4 +92,37 @@ const deleteCar = async (req, res) => {
     res.json(foundCar.rows[0]);
 };
 
-module.exports = { createNewCar, getCarsList, getOneCar, updateCar, deleteCar };
+const buyCar = async (req, res) => {
+    const { carId } = req.params;
+
+    // CHECK CAR EXISTS
+    const foundCar = await (
+        await pool.query("SELECT * FROM cars WHERE id=$1", [carId])
+    ).rows[0];
+
+    if (!foundCar)
+        return res.status(400).json({ message: `Car ID ${carId} not found` });
+
+    // STORE CUSTOMER DATA
+    await pool.query(
+        "INSERT INTO Customers(user_id, car_id, company_id) VALUES($1, $2, $3)",
+        [req.user, foundCar.id, foundCar.company_id]
+    );
+
+    // CHANGE CAR STATE
+    await pool.query("UPDATE Cars SET is_purchased=$1 WHERE id=$2", [
+        true,
+        foundCar.id,
+    ]);
+
+    res.json({ message: `Car ${foundCar.name} was purchased` });
+};
+
+module.exports = {
+    createNewCar,
+    getCarsList,
+    getOneCar,
+    updateCar,
+    deleteCar,
+    buyCar,
+};

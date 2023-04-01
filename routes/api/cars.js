@@ -10,6 +10,9 @@ const carValidation = require("../../validations/carValidation");
 const verifyRole = require("../../middlewares/verifyRole");
 const ROLES_LIST = require("../../config/roles_list");
 
+// BUY CAR
+router.get("/buy/:carId", carsController.buyCar);
+
 // CREATE CAR
 router.post(
     "/create",
