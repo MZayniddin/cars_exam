@@ -18,4 +18,10 @@ router.post(
     carsController.createNewCar
 );
 
+// GET CARS LIST
+router.get("/list", carsController.getCarsList);
+
+// GET ONE CAR
+router.get("/:carId", carsController.getOneCar)
+
 module.exports = router;
