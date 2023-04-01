@@ -24,6 +24,9 @@ router.get("/list", companyController.getAllCompany);
 // GET A COMPANY
 router.get("/:companyId", companyController.getCompany);
 
+// GET A COMPANY THROUGH EMAIL
+router.get("/email/:emailId", companyController.getCompanyThroughEmail);
+
 // UPDATE COMPANY
 router.put(
     "/update/:companyId",

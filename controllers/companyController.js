@@ -86,6 +86,24 @@ const getCompany = async (req, res) => {
     res.status(400).json({ message: `Company ID ${companyId} not found` });
 };
 
+const getCompanyThroughEmail = async (req, res) => {
+    const { emailId } = req.params;
+
+    const result = await (
+        await pool.query(
+            "SELECT c.id, c.name, e.name as email, c.address, u.name as owner FROM Company c JOIN Emails e ON c.email_id=e.id JOIN Users u ON c.created_by=u.id WHERE e.id=$1",
+            [emailId]
+        )
+    ).rows[0];
+
+    if (!result)
+        return res
+            .status(400)
+            .json({ message: `Email ID ${companyId} not found` });
+
+    res.json(result);
+};
+
 const updateCompany = async (req, res) => {
     let { name, address, email } = req.body;
     const { companyId } = req.params;
@@ -171,4 +189,5 @@ module.exports = {
     getCompany,
     updateCompany,
     deleteCompany,
+    getCompanyThroughEmail,
 };
