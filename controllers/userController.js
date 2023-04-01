@@ -57,4 +57,16 @@ const getUsersOfCompany = async (req, res) => {
     res.json(result);
 };
 
-module.exports = { getCustomer, getUserActivity, getUsersOfCompany };
+const getUsersList = async (req, res) => {
+    const usersList = await pool.query(
+        "SELECT u.id, u.name, e.name as email, u.role, c.name as company FROM Users u JOIN Emails e ON u.email_id=e.id JOIN Company c ON u.company_id=c.id"
+    );
+    res.json(usersList.rows);
+};
+
+module.exports = {
+    getCustomer,
+    getUserActivity,
+    getUsersOfCompany,
+    getUsersList,
+};
