@@ -14,4 +14,7 @@ router.get(
     userController.getCustomer
 );
 
+// GET USER'S ACTIVITY
+router.get("/activity/:userId", verifyRole(ROLES_LIST.Admin), userController.getUserActivity)
+
 module.exports = router;
