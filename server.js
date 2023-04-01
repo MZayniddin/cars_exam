@@ -41,6 +41,7 @@ app.use("/logout", require("./routes/logout"));
 app.use(verifyJWT);
 app.use("/car", require("./routes/api/cars"));
 app.use("/company", require("./routes/api/company"));
+app.use("/user", require("./routes/api/user"));
 
 // 404 NOT FOUND
 app.all("*", (req, res) => {
