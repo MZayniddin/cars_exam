@@ -8,12 +8,12 @@ const carValidation = require("../../validations/carValidation");
 
 // ROLE VERIFIER MIDDLEWARE
 const verifyRole = require("../../middlewares/verifyRole");
-const ROLE_LIST = require("../../config/roles_list");
+const ROLES_LIST = require("../../config/roles_list");
 
 // CREATE CAR
 router.post(
     "/create",
-    verifyRole(ROLE_LIST.Admin),
+    verifyRole(ROLES_LIST.Admin),
     carValidation,
     carsController.createNewCar
 );
@@ -22,6 +22,14 @@ router.post(
 router.get("/list", carsController.getCarsList);
 
 // GET ONE CAR
-router.get("/:carId", carsController.getOneCar)
+router.get("/:carId", carsController.getOneCar);
+
+// UPDATE CAR
+router.put(
+    "/update/:carId",
+    verifyRole(ROLES_LIST.Admin),
+    carValidation,
+    carsController.updateCar
+);
 
 module.exports = router;
