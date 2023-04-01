@@ -7,6 +7,9 @@ const userController = require("../../controllers/userController");
 const verifyRole = require("../../middlewares/verifyRole");
 const ROLES_LIST = require("../../config/roles_list");
 
+// VALIDATION
+const signInValidation = require("../../validations/signInValidation");
+
 // GET USER'S PURCHASED CARS
 router.get(
     "/customer/:userId",
@@ -30,5 +33,8 @@ router.get(
 
 // GET USERS LIST
 router.get("/list", verifyRole(ROLES_LIST.Owner), userController.getUsersList);
+
+// UPDATE USER PROFILE
+router.post("/update", signInValidation, userController.updateProfile)
 
 module.exports = router;

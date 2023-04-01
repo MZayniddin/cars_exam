@@ -3,6 +3,11 @@ const bcrypt = require("bcrypt");
 
 const signIn = async (req, res, next) => {
     const { username, password, email, age } = req.body;
+    if (!username || !password || !email || !age)
+        return res.status(400).json({
+            message:
+                "Each space: User name, password, email and age are required!",
+        });
 
     try {
         // CHECK USER TO DUPLICATE

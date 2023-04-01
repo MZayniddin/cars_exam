@@ -1,4 +1,5 @@
 const pool = require("../config/dbCon");
+const bcrypt = require("bcrypt");
 
 const getCustomer = async (req, res) => {
     const { userId } = req.params;
@@ -64,9 +65,66 @@ const getUsersList = async (req, res) => {
     res.json(usersList.rows);
 };
 
+const updateProfile = async (req, res) => {
+    let { username, password, email, age, new_password } = req.body;
+    if (!password)
+        return res.status(400).json({ message: "Password required!" });
+
+    const foundUser = await (
+        await pool.query("SELECT * FROM users WHERE id=$1", [req.user])
+    ).rows[0];
+
+    if (!foundUser)
+        return res
+            .status(400)
+            .json({ message: `User ID ${req.user} not found!` });
+
+    // CHECK PASSWORD
+    const checkPwd = await bcrypt.compare(password, foundUser.password);
+
+    if (!checkPwd)
+        return res.status(401).json({ message: "Incorrect password" });
+
+    // CHECK EMAIL AND UPDATE
+    if (email) {
+        const checkEmail = await (
+            await pool.query("SELECT name FROM Emails WHERE name=$1", [email])
+        ).rows[0];
+
+        if (checkEmail)
+            return res.status(406).json({
+                message: "This email is already in use by another account",
+            });
+
+        await pool.query("UPDATE Emails SET name=$1 WHERE id=$2", [
+            email,
+            foundUser.email_id,
+        ]);
+    }
+
+    // UPDATE USER DATA
+    username = username ? username : foundUser.name;
+    age = age ? age : foundUser.age;
+
+    const updatedUserData = await pool.query(
+        "UPDATE Users SET name=$1, age=$2 WHERE id=$3 RETURNING id, name, email_id, age",
+        [username, age, req.user]
+    );
+    res.status(202).json(updatedUserData.rows[0]);
+
+    if (new_password) {
+        const newHashedPwd = await bcrypt.hash(new_password, 10);
+        await pool.query("UPDATE Users SET password=$1 WHERE id=$2", [
+            newHashedPwd,
+            req.user,
+        ]);
+    }
+};
+
 module.exports = {
     getCustomer,
     getUserActivity,
     getUsersOfCompany,
     getUsersList,
+    updateProfile,
 };
