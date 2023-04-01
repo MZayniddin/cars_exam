@@ -42,4 +42,28 @@ const getUserActivity = async (req, res) => {
     res.json(result);
 };
 
-module.exports = { getCustomer, getUserActivity };
+const getUsersOfCompany = async (req, res) => {
+    const { companyId } = req.params;
+
+    // CHECK COMPANY EXISTS
+    const foundCompany = await (
+        await pool.query("SELECT * FROM Company WHERE id=$1", [companyId])
+    ).rows[0];
+
+    if (!foundCompany)
+        return res
+            .status(400)
+            .json({ message: `Company ID ${companyId} not found!` });
+
+    // GET USERS
+    const result = await (
+        await pool.query(
+            "SELECT u.id, u.name, u.age, u.email_id, u.role, u.company_id FROM Users u JOIN Company c ON u.company_id=c.id WHERE c.id=$1",
+            [companyId]
+        )
+    ).rows;
+
+    res.json(result);
+};
+
+module.exports = { getCustomer, getUserActivity, getUsersOfCompany };

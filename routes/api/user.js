@@ -15,6 +15,17 @@ router.get(
 );
 
 // GET USER'S ACTIVITY
-router.get("/activity/:userId", verifyRole(ROLES_LIST.Admin), userController.getUserActivity)
+router.get(
+    "/activity/:userId",
+    verifyRole(ROLES_LIST.Admin),
+    userController.getUserActivity
+);
+
+// GET USERS OF COMPANY
+router.get(
+    "/company/:companyId",
+    verifyRole(ROLES_LIST.Admin),
+    userController.getUsersOfCompany
+);
 
 module.exports = router;
