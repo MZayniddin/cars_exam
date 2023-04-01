@@ -32,7 +32,10 @@ const getOneCar = async (req, res) => {
     const { carId } = req.params;
 
     const foundCar = await (
-        await pool.query("SELECT * FROM Cars WHERE id=$1", [carId])
+        await pool.query(
+            "SELECT c.id, c.name, c.price, c.color, c.brand, u.name as created_by, co.name as company FROM Cars c JOIN Company co ON co.id=c.company_id JOIN Users u ON u.id=c.created_by WHERE c.id=$1",
+            [carId]
+        )
     ).rows[0];
 
     if (!foundCar)
@@ -95,16 +98,6 @@ const deleteCar = async (req, res) => {
 const getCarsOfCompany = async (req, res) => {
     const { companyId } = req.params;
 
-    // CHECK COMPANY EXISTS
-    const foundCompany = await (
-        await pool.query("SELECT * FROM Company WHERE id=$1", [companyId])
-    ).rows[0];
-
-    if (!foundCompany)
-        return res
-            .status(400)
-            .json({ message: `Company ID ${companyId} not found!` });
-
     // GET CARS OF COMPANY
     const result = await (
         await pool.query(
@@ -112,6 +105,11 @@ const getCarsOfCompany = async (req, res) => {
             [companyId]
         )
     ).rows;
+
+    if (!result[0])
+        return res
+            .status(400)
+            .json({ message: `Company ID ${companyId} not found!` });
 
     res.json(result);
 };

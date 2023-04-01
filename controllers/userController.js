@@ -23,13 +23,6 @@ const getCustomer = async (req, res) => {
 
 const getUserActivity = async (req, res) => {
     const { userId } = req.params;
-    // CHECK USER EXISTS
-    const foundUser = await (
-        await pool.query("SELECT * FROM Users WHERE id=$1", [userId])
-    ).rows[0];
-
-    if (!foundUser)
-        return res.status(400).json({ message: `User ID ${userId} not found` });
 
     // GET USER'S ACTIVITY DATA
     const result = await (
@@ -39,21 +32,14 @@ const getUserActivity = async (req, res) => {
         )
     ).rows;
 
+    if (!result[0])
+        return res.status(400).json({ message: `User ID ${userId} not found` });
+
     res.json(result);
 };
 
 const getUsersOfCompany = async (req, res) => {
     const { companyId } = req.params;
-
-    // CHECK COMPANY EXISTS
-    const foundCompany = await (
-        await pool.query("SELECT * FROM Company WHERE id=$1", [companyId])
-    ).rows[0];
-
-    if (!foundCompany)
-        return res
-            .status(400)
-            .json({ message: `Company ID ${companyId} not found!` });
 
     // GET USERS
     const result = await (
@@ -62,6 +48,11 @@ const getUsersOfCompany = async (req, res) => {
             [companyId]
         )
     ).rows;
+
+    if (!result[0])
+        return res
+            .status(400)
+            .json({ message: `Company ID ${companyId} not found!` });
 
     res.json(result);
 };
