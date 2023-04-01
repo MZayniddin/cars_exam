@@ -35,6 +35,9 @@ router.get(
 router.get("/list", verifyRole(ROLES_LIST.Owner), userController.getUsersList);
 
 // UPDATE USER PROFILE
-router.post("/update", signInValidation, userController.updateProfile)
+router.post("/update", signInValidation, userController.updateProfile);
+
+// DELETE USER
+router.delete("/destroy/:userId", verifyRole(ROLES_LIST.Owner), userController.deleteUser)
 
 module.exports = router;

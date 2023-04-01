@@ -121,10 +121,33 @@ const updateProfile = async (req, res) => {
     }
 };
 
+const deleteUser = async (req, res) => {
+    const { userId } = req.params;
+
+    // CHECK USER EXISTS
+    const foundUser = await pool.query("SELECT * FROM users WHERE id=$1", [
+        userId,
+    ]);
+
+    if (!foundUser.rows[0])
+        return res.status(400).json({ message: `User ID ${userId} not found` });
+
+    // DELETE USER FROM DB
+    await pool.query("DELETE FROM users WHERE id=$1", [userId]);
+    await pool.query("DELETE FROM emails WHERE id=$1", [
+        foundUser.rows[0].email_id,
+    ]);
+
+    res.status(200).json({
+        message: `User ${foundUser.rows[0].name} deleted!`,
+    });
+};
+
 module.exports = {
     getCustomer,
     getUserActivity,
     getUsersOfCompany,
     getUsersList,
     updateProfile,
+    deleteUser,
 };
