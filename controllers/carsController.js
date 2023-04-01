@@ -71,4 +71,25 @@ const updateCar = async (req, res) => {
     res.status(202).json(updatedCar.rows[0]);
 };
 
-module.exports = { createNewCar, getCarsList, getOneCar, updateCar };
+const deleteCar = async (req, res) => {
+    const { carId } = req.params;
+
+    // CHECK CAR EXISTS
+    const foundCar = await pool.query("SELECT * FROM cars WHERE id=$1", [
+        carId,
+    ]);
+
+    if (!foundCar.rows[0])
+        return res.status(400).json({ message: `Car ID ${carId} not found` });
+
+    // CHECK USER'S CAR
+    if (foundCar.rows[0].company_id !== req.companyId)
+        return res.status(403).json({ message: "It's not your car" });
+
+    // DELETE CAR FROM DB
+    await pool.query("DELETE FROM Cars WHERE id=$1", [carId]);
+
+    res.json(foundCar.rows[0]);
+};
+
+module.exports = { createNewCar, getCarsList, getOneCar, updateCar, deleteCar };

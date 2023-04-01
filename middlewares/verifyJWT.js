@@ -10,6 +10,7 @@ const verifyJWT = (req, res, next) => {
             req.user = decoded.id;
             req.role = decoded.role;
             req.companyId = decoded.company_id;
+            console.log(decoded)
             next();
         });
     } catch (err) {

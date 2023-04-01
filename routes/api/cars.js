@@ -32,4 +32,11 @@ router.put(
     carsController.updateCar
 );
 
+// DELETE CAR
+router.delete(
+    "/destroy/:carId",
+    verifyRole(ROLES_LIST.Admin),
+    carsController.deleteCar
+);
+
 module.exports = router;
