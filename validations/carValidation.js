@@ -9,7 +9,7 @@ const carValidation = async (req, res, next) => {
 
     const schema = Joi.object({
         name: Joi.string().min(2).max(30),
-        price: Joi.number().min(1).max(30),
+        price: Joi.number().min(1).max(2000000),
         color: Joi.string().alphanum().min(3).max(20),
         brand: Joi.string().min(2).max(30),
     });

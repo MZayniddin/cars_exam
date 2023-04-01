@@ -33,6 +33,7 @@ const signUp = async (req, res, next) => {
         {
             id: foundUser.id,
             role: foundUser.role,
+            company_id: foundUser.company_id,
         },
         process.env.ACCESS_SECRET_KEY,
         {

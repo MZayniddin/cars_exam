@@ -9,6 +9,7 @@ const verifyJWT = (req, res, next) => {
             if (err) res.sendStatus(401);
             req.user = decoded.id;
             req.role = decoded.role;
+            req.companyId = decoded.company_id;
             next();
         });
     } catch (err) {
