@@ -92,6 +92,30 @@ const deleteCar = async (req, res) => {
     res.json(foundCar.rows[0]);
 };
 
+const getCarsOfCompany = async (req, res) => {
+    const { companyId } = req.params;
+
+    // CHECK COMPANY EXISTS
+    const foundCompany = await (
+        await pool.query("SELECT * FROM Company WHERE id=$1", [companyId])
+    ).rows[0];
+
+    if (!foundCompany)
+        return res
+            .status(400)
+            .json({ message: `Company ID ${companyId} not found!` });
+
+    // GET CARS OF COMPANY
+    const result = await (
+        await pool.query(
+            "SELECT c.id, c.name, c.price, c.color, c.brand, u.name as created_by, c.is_purchased FROM Cars c JOIN Company co ON c.company_id=co.id JOIN Users u ON c.created_by=u.id WHERE co.id=$1",
+            [companyId]
+        )
+    ).rows;
+
+    res.json(result);
+};
+
 const buyCar = async (req, res) => {
     const { carId } = req.params;
 
@@ -125,4 +149,5 @@ module.exports = {
     updateCar,
     deleteCar,
     buyCar,
+    getCarsOfCompany,
 };

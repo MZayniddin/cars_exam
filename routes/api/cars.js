@@ -13,6 +13,9 @@ const ROLES_LIST = require("../../config/roles_list");
 // BUY CAR
 router.get("/buy/:carId", carsController.buyCar);
 
+// GET CARS OF COMPANY
+router.get("/company/:companyId", carsController.getCarsOfCompany);
+
 // CREATE CAR
 router.post(
     "/create",
