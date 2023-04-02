@@ -89,6 +89,9 @@ const deleteCar = async (req, res) => {
     if (foundCar.rows[0].company_id !== req.companyId)
         return res.status(403).json({ message: "It's not your car" });
 
+    // DELETE CAR FROM CUSTOMERS TABLE
+    await pool.query("DELETE FROM Customers WHERE car_id=$1", [carId]);
+
     // DELETE CAR FROM DB
     await pool.query("DELETE FROM Cars WHERE id=$1", [carId]);
 
@@ -124,6 +127,12 @@ const buyCar = async (req, res) => {
 
     if (!foundCar)
         return res.status(400).json({ message: `Car ID ${carId} not found` });
+
+    // CHECK CAR IS SOLD OUT
+    if (foundCar.is_purchased)
+        return res
+            .status(400)
+            .json({ message: `Car ${foundCar.name} was already sold` });
 
     // STORE CUSTOMER DATA
     await pool.query(

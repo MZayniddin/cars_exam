@@ -169,6 +169,19 @@ const deleteCompany = async (req, res) => {
 
     // CHECK USER
     if (foundCompany.created_by === req.user) {
+        // UPDATE FROM USER
+        await pool.query("UPDATE Users SET company_id=null WHERE id=$1", [
+            req.user,
+        ]);
+
+        // DELETE FROM CUSTOMERS
+        await pool.query("DELETE FROM Customers WHERE company_id=$1", [
+            companyId,
+        ]);
+
+        // DELETE COMPANY CARS
+        await pool.query("DELETE FROM Cars WHERE company_id=$1", [companyId]);
+
         // DELETE COMPANY
         await pool.query("DELETE FROM Company WHERE id=$1", [companyId]);
 
